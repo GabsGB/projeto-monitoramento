@@ -1,5 +1,7 @@
 import mariadb
 import sys
+from classes.Impressora import Impressora
+from classes.Filial import Filial
 
 def conectar_bd(comando, method='insert'):
     
@@ -28,27 +30,20 @@ def conectar_bd(comando, method='insert'):
         return resposta
     cursor.close()
 
-
-#def show_tables():
-
-
 #  FUNÇÕES CRUD FILIAIS
 
-def insert_filial():
-    while True:
-        filial_num = input("Digite o número da filial: ")
-        if filial_num == "0":break
-        filial_nome = input("Digite o nome da filial: ")
-        confirmacao = input(f"Deseja adicionar a filial {filial_num} - {filial_nome}  S/N: ")
-        if confirmacao.lower() == "s":
-            comando = f'INSERT INTO filiais VALUES ({int(filial_num)}, "{filial_nome}")'
-            conectar_bd(comando)
-        filial_num = filial_nome = ""
+def insert_tbl_filiais(filial):
+    comando = f'INSERT INTO filiais VALUES ({int(filial.num)}, "{filial.nome}")'
+    conectar_bd(comando)
 
 def read_filiais():
     comando = 'SELECT * FROM teste.filiais'
-    filiais = conectar_bd(comando, method='read')
-    return filiais
+    filiais_leitura = conectar_bd(comando, method='read')
+    filiais_bd = []
+    for leitura in filiais_leitura:
+        filial = Filial(leitura[0], leitura[1])
+        filiais_bd.append(filial)
+    return filiais_bd
 
 def alter_filiais():
     return
@@ -57,17 +52,17 @@ def delete_filiais():
     return
 
 #  FUNÇÕES CRUD IMPRESSORAS
-def insert_tbl_impressora(impressora):
+def insert_tbl_impressoras(impressora): # alterar o código para POO
     # Preparar a consulta SQL, tratando NULL para o campo ip
-    ip_value = "NULL" if impressora["ip"] is None else f'"{impressora["ip"]}"'
-    comando = f'INSERT INTO impressoras(num_serie, modelo, tipo, ip, conexao) VALUES ("{impressora["num_serie"]}", "{impressora["modelo"]}", "{impressora["tipo"]}", {ip_value}, "{impressora["conexao"]}")'
+    ip_value = "NULL" if impressora.ip is None else f'"{impressora.ip}"'
+    comando = f'INSERT INTO impressoras(num_serie, modelo, tipo, ip, conexao) VALUES ("{impressora.num_serie}", "{impressora.modelo}", "{impressora.tipo}", {ip_value}, "{impressora["conexao"]}")'
     
     print(comando)  # Verificar a consulta SQL gerada
     conectar_bd(comando)
 
-def insert_tbl_relImpressora(impressora):
+def insert_tbl_relImpressora(impressora): # alterar o código para POO
     # Preparar a consulta SQL, tratando NULL para o campo ip
-    comando = f'INSERT INTO impressora_filial(num_serie, filial_id, status) VALUES ("{impressora["num_serie"]}", "{impressora["filial_id"]}", "{impressora["status"]}")' 
+    comando = f'INSERT INTO impressora_filial(num_serie, filial_id, status) VALUES ("{impressora.num_serie}", "{impressora.filial_id}", "{impressora.status}")' 
     conectar_bd(comando)
 
 def limpar_tbl(tabela):
@@ -78,7 +73,17 @@ def limpar_tbl(tabela):
 def read_impressoras():
     comando = 'SELECT * FROM teste.impressoras WHERE ip != ""'
     impressoras = conectar_bd(comando, method='read')
+    impressoras_bd = []
+    for leitura in impressoras:
+        imp = Impressora(leitura[0], leitura[1], leitura[2], leitura[3], leitura[4], leitura[5])
+        impressoras_bd.append(imp)
 
-    return impressoras
+    return impressoras_bd
     
-#
+def insert_tbl_contMensais(impressora):
+    comando = f'''
+    INSERT INTO contadores_mensais (num_serie, filial_id, contador)
+    VALUES ("{impressora.num_serie}", {int(impressora.filial_id)}, {float(impressora.contador)})
+    '''
+    conectar_bd(comando)
+    return

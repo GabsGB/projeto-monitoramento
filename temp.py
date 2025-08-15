@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from util.bd import insert_impressora
+from services.bd_service import insert_impressora
 
 df = pd.read_excel("impressorasbd.xlsx")
 
