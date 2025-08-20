@@ -71,7 +71,7 @@ def limpar_tbl(tabela):
     conectar_bd(comando)
 
 def read_impressoras():
-    comando = 'SELECT * FROM teste.impressoras WHERE ip != ""'
+    comando = 'SELECT * FROM teste.impressoras'
     impressoras = conectar_bd(comando, method='read')
     impressoras_bd = []
     for leitura in impressoras:
