@@ -11,6 +11,7 @@ from typing import Tuple
 '''
 coletar_statusImpressora() -> Baixa as impressoras do BD
 '''
+
 def coletar_statusImpressora() -> Tuple[list[Impressora], list[Impressora]]:
     impressoras_leitura: list[Impressora] = read_impressoras()
     impressoras_atualizadas: list = []
@@ -40,32 +41,38 @@ def scan_filiais():
     impressoras_filiais = []
 
     for filial in filiais_bd:
+        print(f"Rodando na filial {filial.id}")
         for impressora in faixaImpressoras:
             ip = f"10.0.{str(filial.id)}.{str(impressora)}"
-            print(f"\nTestando IP {ip}\n")
+            print(f"\n==========================================\nTestando IP {ip}")
             if scan(ip):
                 print("Ip ativo!")
                 imp = Impressora(ip=ip,conexao="IP",status="Ativo")
                 controler = ImpressoraController(imp)
                 controler.atualizar_dados_snmp()
                 if imp.num_serie != None:
+                    print(f"N° de série {imp.num_serie}")
                     if imp.filial_id == "1" or "ZD230" in imp.modelo:
+                        print("Impressora bloqueada! Matriz ou Zebra")
                         continue
+                    print(f"Impressora inserida na lista de atualzação.")
                     impressoras_filiais.append(imp)
             else:
                 print("Ip offline!")
                 if ip in bd_por_ip:
-                    print("IP cadastrado no banco... alterando status da impressora")
+                    print("IP cadastrado no banco... alterando status da impressora...")
                     imp_existente = bd_por_ip[ip]
                     controler = ImpressoraController(imp_existente)
                     controler.set_status("Offline")
+                    print(f"Impressora inserida na lista de atualzação.")
                     impressoras_filiais.append(imp_existente)
+    
+    return  impressoras_filiais, impressoras_bd
+    #sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
 
-    sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
 
-def attImpressora_filial():
-    impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
-    sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
+def attImpressora_filial(impressoras_bd, impressoras_atualizadas):
+    #impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
 
     print(len(impressoras_atualizadas))
     limpar_tbl("impressora_filial")
@@ -75,8 +82,8 @@ def attImpressora_filial():
             insert_tbl_relImpressora(controler)
 
 
-def attCont_mensais():
-    impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
+def attCont_mensais(impressoras_bd, impressoras_atualizadas):
+    #impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
     sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
 
     for impressora in impressoras_atualizadas:
