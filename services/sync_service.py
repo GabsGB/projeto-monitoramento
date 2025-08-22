@@ -20,7 +20,7 @@ def sincronizar_impressoras(impressoras_novas, impressoras_bd):
 
     for nova in impressoras_novas:
         print(f"N° de série: {nova.num_serie}")
-        if nova.num_serie != None: # ignora
+        if nova.num_serie: # ignora
             if nova.num_serie not in bd_por_serie: # Verifica se a imrpessora não esta cadastrada pelo n° de série
                 
                 print("[X] Impressora não está no BD")
