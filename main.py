@@ -3,4 +3,4 @@ from services.bd_service import read_impressoras, read_filiais
 from util.snmp import snmp
 
 if __name__ == "__main__":
-    scan_filiais()
+    #scan_filiais()
