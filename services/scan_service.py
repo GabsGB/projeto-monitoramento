@@ -9,10 +9,10 @@ from typing import Tuple
 #import numpy as np  
 
 '''
-coletar_statusImpressora() -> Baixa as impressoras do BD
+scan_bd() -> Baixa as impressoras do BD
 '''
 
-def coletar_statusImpressora() -> Tuple[list[Impressora], list[Impressora]]:
+def scan_bd() -> Tuple[list[Impressora], list[Impressora]]:
     impressoras_leitura: list[Impressora] = read_impressoras()
     impressoras_atualizadas: list = []
     
@@ -27,7 +27,8 @@ def coletar_statusImpressora() -> Tuple[list[Impressora], list[Impressora]]:
             impressoras_atualizadas.append(imp)
         else: continue
 
-    return impressoras_leitura, impressoras_atualizadas
+    sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_leitura)
+    return impressoras_atualizadas
 
 
 def scan_filiais():
@@ -66,13 +67,18 @@ def scan_filiais():
                     controler.set_status("Offline")
                     print(f"Impressora inserida na lista de atualzação.")
                     impressoras_filiais.append(imp_existente)
-    
-    return  impressoras_filiais, impressoras_bd
-    #sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
+    sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
+    return  impressoras_filiais
 
 
-def attImpressora_filial(impressoras_bd, impressoras_atualizadas):
-    #impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
+def scan_manual():
+    ips = input("Digite a faixa de Ip que deseja buscar: ")
+    print(ips)
+    pass
+
+
+def attImpressora_filial(impressoras_atualizadas):
+    #impressoras_bd, impressoras_atualizadas = scan_bd()
 
     print(len(impressoras_atualizadas))
     limpar_tbl("impressora_filial")
@@ -82,9 +88,9 @@ def attImpressora_filial(impressoras_bd, impressoras_atualizadas):
             insert_tbl_relImpressora(controler)
 
 
-def attCont_mensais(impressoras_bd, impressoras_atualizadas):
-    #impressoras_bd, impressoras_atualizadas = coletar_statusImpressora()
-    sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
+def attCont_mensais(impressoras_atualizadas):
+    #impressoras_bd, impressoras_atualizadas = scan_bd()
+    #sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
 
     for impressora in impressoras_atualizadas:
         if impressora.status == "Ativo":
