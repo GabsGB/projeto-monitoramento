@@ -5,6 +5,7 @@ from .sync_service import sincronizar_impressoras
 from util.scan import scan
 from util.snmp import snmp
 from typing import Tuple
+from .validacao import validar_impressora, validar_ip
 #import pandas as pd
 #import numpy as np  
 
@@ -46,35 +47,36 @@ def scan_filiais():
         for impressora in faixaImpressoras:
             ip = f"10.0.{str(filial.id)}.{str(impressora)}"
             print(f"\n==========================================\nTestando IP {ip}")
-            if scan(ip):
-                print("Ip ativo!")
-                imp = Impressora(ip=ip,conexao="IP",status="Ativo")
-                controler = ImpressoraController(imp)
-                controler.atualizar_dados_snmp()
-                if imp.num_serie != None:
-                    print(f"N° de série {imp.num_serie}")
-                    if imp.filial_id == "1" or "ZD230" in imp.modelo:
-                        print("Impressora bloqueada! Matriz ou Zebra")
-                        continue
-                    print(f"Impressora inserida na lista de atualzação.")
-                    impressoras_filiais.append(imp)
-            else:
-                print("Ip offline!")
-                if ip in bd_por_ip:
-                    print("IP cadastrado no banco... alterando status da impressora...")
-                    imp_existente = bd_por_ip[ip]
-                    controler = ImpressoraController(imp_existente)
-                    controler.set_status("Offline")
-                    print(f"Impressora inserida na lista de atualzação.")
-                    impressoras_filiais.append(imp_existente)
+            imp = validar_impressora(ip)
+            if imp is not None:
+                impressoras_filiais.append(imp)
+                
     sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
     return  impressoras_filiais
 
 
 def scan_manual():
-    ips = input("Digite a faixa de Ip que deseja buscar: ")
-    print(ips)
-    pass
+    impressora_atulizar = []
+    impressoras_bd = read_impressoras()
+
+    tipo_scan = int(input("""
+        1 - IP único
+        2 - Faixa de IP
+        : """))
+    
+    if tipo_scan == 1:
+        ip = input("digite o IP (ex: 255.255.255.255, 10.0.0.1...): ")
+        if ip is not None:
+            if validar_ip(ip):
+                imp = validar_impressora(ip)
+                if imp:
+                    impressora_atulizar.append(imp)
+        
+    elif tipo_scan == 2:
+        
+        pass
+
+    sincronizar_impressoras(impressoras_novas=impressora_atulizar, impressoras_bd=impressoras_bd)
 
 
 def attImpressora_filial(impressoras_atualizadas):
