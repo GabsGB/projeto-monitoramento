@@ -6,6 +6,19 @@ class ImpressoraController:
     def __init__(self, impressora=None):
         self.impressora = impressora
     
+
+    def __str__(self):
+        return """"
+            num_serie": self.impressora.num_serie,
+            "modelo": self.impressora.modelo,
+            "tipo": self.impressora.tipo,
+            "ip": self.impressora.ip,
+            "filial_id": self.impressora.filial_id,
+            "status": self.impressora.status,
+            "conexao": self.impressora.conexao,
+            "contador": self.impressora.contador
+            """
+
     
     def set_impressora(self, nova_impressora):
         self.impressora = nova_impressora
@@ -67,10 +80,11 @@ class ImpressoraController:
             "status": self.impressora.status,
             "conexao": self.impressora.conexao,
             "contador": self.impressora.contador
-        }   
+        }
 
 
     def salvar_bd(self, antigo=None): # Se for realizar insert somente chamar a função, para update mandar o objeto antigo
+
         if antigo is None:
             # 🔹 INSERT - impressora nova
             ip_value = 'NUll' if self.impressora.ip is None else '"'+self.impressora.ip+'"'

@@ -6,6 +6,7 @@ from util.scan import scan
 from util.snmp import snmp
 from typing import Tuple
 from .validacao import validar_impressora, validar_ip
+import copy
 #import pandas as pd
 #import numpy as np  
 
@@ -14,21 +15,25 @@ scan_bd() -> Baixa as impressoras do BD
 '''
 
 def scan_bd() -> Tuple[list[Impressora], list[Impressora]]:
-    impressoras_leitura: list[Impressora] = read_impressoras()
+    impressoras_bd: list[Impressora] = read_impressoras()
+    impressoras_leitura = copy.deepcopy(impressoras_bd)
+
     impressoras_atualizadas: list = []
-    
     
     for imp in impressoras_leitura:
         if imp.ip is not None:
+            #print(f"\nIP: {imp.ip}")
+            #print(f"N° de série: {imp.num_serie}\n")
             controler = ImpressoraController(imp)
             controler.set_filialId()
-            if imp.filial_id == "1" or "ZD230" in imp.modelo:
+            if "ZD230" in imp.modelo or imp.filial_id == "1":
                 continue
             controler.atualizar_dados_snmp()
+            #print(f"IP: {imp.ip}")
             impressoras_atualizadas.append(imp)
         else: continue
-
-    sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_leitura)
+    
+    sincronizar_impressoras(impressoras_atualizadas, impressoras_bd)
     return impressoras_atualizadas
 
 
@@ -95,6 +100,6 @@ def attCont_mensais(impressoras_atualizadas):
     #sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
 
     for impressora in impressoras_atualizadas:
-        if impressora.status == "Ativo":
+        if impressora.status == "Ativo" and int(impressora.filial_id) != 1:
             insert_tbl_contMensais(impressora)
 

@@ -75,12 +75,27 @@ def read_impressoras():
     impressoras = conectar_bd(comando, method='read')
     impressoras_bd = []
     for leitura in impressoras:
+        #print(leitura)
         imp = Impressora(leitura[0], leitura[1], leitura[2], leitura[3], leitura[4], leitura[5])
+        print(imp.num_serie)
+        #print(imp.ip)
         impressoras_bd.append(imp)
 
     return impressoras_bd
     
 def insert_tbl_contMensais(impressora):
+    
+    #print(f'''
+    #    "num_serie": {impressora.num_serie},
+    #        "modelo": {impressora.modelo},
+    #        "tipo": self.{impressora.tipo},
+    #        "ip": self.{impressora.ip},
+    #        "filial_id": self.{impressora.filial_id},
+    #        "status": self.{impressora.status},
+    #        "conexao": self.{impressora.conexao},
+    #        "contador": self.{impressora.contador}
+    #''')
+
     comando = f'''
     INSERT INTO contadores_mensais (num_serie, filial_id, contador)
     VALUES ("{impressora.num_serie}", {int(impressora.filial_id)}, {float(impressora.contador)})
