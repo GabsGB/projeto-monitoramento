@@ -36,18 +36,16 @@ def sincronizar_impressoras(impressoras_novas, impressoras_bd):
 
         else: # num_serie está cadastrado ja
             print("[✓] Impressora está no BD")
-            atual = bd_por_serie[nova.num_serie]
+            atual = bd_por_serie[nova.num_serie] # recebe os dados da impressora do BD (versão antiga)
 
-            #if nova.ip != atual.ip and nova.ip in bd_por_ip:
             if nova.ip != atual.ip and nova.ip in bd_por_ip:
-                imp_conflitante = bd_por_ip[nova.ip]
-                print(f"[X] IP {nova.ip} já está em uso pela impressora {imp_conflitante.num_serie}. Limpando IP da impressora conflitante.")
-                controler_conflito = ImpressoraController(imp_conflitante)
-                controler_conflito.limparIp()
-                controler_conflito.salvar_bd(imp_conflitante)
+                imp_antiga = bd_por_ip[nova.ip]
+                controler = ImpressoraController(imp_antiga)
+                print(f"[X] IP cadastrado com outra impressora {imp_antiga.num_serie} ... limpando ip da impressora antiga!")
+                controler.limparIp()
+                controler.salvar_bd(bd_por_ip[nova.ip])
 
-            controler = ImpressoraController(nova)
-            controler.salvar_bd(atual)
-
+            controler = ImpressoraController(nova) # recebe a impressora após o scan
+            controler.salvar_bd(atual) # verifica se possui atualizações e se tiver salva
         
     print("\n[✓] Impressoras sincronizadas.")
