@@ -10,10 +10,6 @@ import copy
 #import pandas as pd
 #import numpy as np  
 
-'''
-scan_bd() -> Baixa as impressoras do BD
-'''
-
 def scan_bd() -> Tuple[list[Impressora], list[Impressora]]:
     impressoras_bd: list[Impressora] = read_impressoras()
     impressoras_leitura = copy.deepcopy(impressoras_bd)
@@ -41,21 +37,33 @@ def scan_filiais():
     print("Iniciando scan total das filiais...")
     filiais_bd = read_filiais()
     impressoras_bd = read_impressoras()
-    bd_por_ip = {imp.ip: imp for imp in impressoras_bd}
     
-    faixaImpressoras = range(50, 56)
-    
+    faixa_filial = range(50, 56)
     impressoras_filiais = []
 
     for filial in filiais_bd:
         print(f"Rodando na filial {filial.id}")
-        for impressora in faixaImpressoras:
+        for impressora in faixa_filial:
             ip = f"10.0.{str(filial.id)}.{str(impressora)}"
             print(f"\n==========================================\nTestando IP {ip}")
             imp = validar_impressora(ip)
             if imp is not None:
                 impressoras_filiais.append(imp)
-                
+    print(f"\nFinalizado scan das filiais.\n")
+
+    # Realizar testes mas primeiro garantir que somente as impressoras estão conectadas nessa faixa
+    '''
+    faixa_matriz = range(1,254)
+    ipBase_matriz = '192.168.50'
+    print(f"Iniciando scan na matriz na faixa {ipBase_matriz}.X")
+
+    for impressora in faixa_matriz:
+        ip = ipBase_matriz + str(impressora)
+        print(f"\n==========================================\nTestando IP {ip}")
+        imp = validar_impressora(ip)
+        if imp is not None:
+            impressoras_filiais.append(imp)
+    '''
     sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
     return  impressoras_filiais
 
@@ -65,6 +73,7 @@ def scan_manual():
     impressoras_bd = read_impressoras()
 
     tipo_scan = int(input("""
+    
         1 - IP único
         2 - Faixa de IP
         : """))

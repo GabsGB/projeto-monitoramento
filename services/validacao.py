@@ -7,25 +7,17 @@ import ipaddress
 def validar_ipv4(ip):
     try:
         ip = ipaddress.IPv4Address(ip)
-        if ip.is_private:
-            print(f"Ip {ip} permitido!")
-            return True
-        else:
+        if ip.is_multicast or ip.is_loopback or ip.is_unspecified or not ip.is_private:
             print(f"Ip {ip} não permitido!")
             return False
+        
+        elif ip.is_private:
+            print(f"Ip {ip} permitido!")
+            return True
+
     except ipaddress.AddressValueError:
         print(f"IP {ip} inválido")
         return False
-    
-
-
-def validar_ip(ip):
-
-    if "." not in ip:
-        return False
-    if not len(ip.split(".")) <= 4:
-        return False
-    
     
 
 def validar_impressora(ip):
