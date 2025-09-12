@@ -36,6 +36,7 @@ def insert_tbl_filiais(filial):
     comando = f'INSERT INTO filiais VALUES ({int(filial.num)}, "{filial.nome}")'
     conectar_bd(comando)
 
+
 def read_filiais():
     comando = 'SELECT * FROM teste.filiais'
     filiais_leitura = conectar_bd(comando, method='read')
@@ -45,8 +46,10 @@ def read_filiais():
         filiais_bd.append(filial)
     return filiais_bd
 
+
 def alter_filiais():
     return
+
 
 def delete_filiais():
     return
@@ -60,15 +63,18 @@ def insert_tbl_impressoras(impressora): # alterar o código para POO
     print(comando)  # Verificar a consulta SQL gerada
     conectar_bd(comando)
 
+
 def insert_tbl_relImpressora(impressora): # alterar o código para POO
     # Preparar a consulta SQL, tratando NULL para o campo ip
     comando = f'INSERT INTO impressora_filial(num_serie, filial_id, status) VALUES ("{impressora.num_serie}", "{impressora.filial_id}", "{impressora.status}")' 
     conectar_bd(comando)
 
+
 def limpar_tbl(tabela):
     #Inserir uma verificação da entrada
     comando = f'truncate {tabela.lower()}'
     conectar_bd(comando)
+
 
 def read_impressoras():
     comando = 'SELECT * FROM teste.impressoras'
@@ -80,9 +86,11 @@ def read_impressoras():
         print(imp.num_serie)
         #print(imp.ip)
         impressoras_bd.append(imp)
-
+    bd_por_serie = {imp.num_serie: imp for imp in impressoras_bd}
+    print(bd_por_serie.keys())
     return impressoras_bd
-    
+
+
 def insert_tbl_contMensais(impressora):
     
     #print(f'''
@@ -102,3 +110,4 @@ def insert_tbl_contMensais(impressora):
     '''
     conectar_bd(comando)
     return
+

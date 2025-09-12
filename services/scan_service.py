@@ -5,7 +5,7 @@ from .sync_service import sincronizar_impressoras
 from util.scan import scan
 from util.snmp import snmp
 from typing import Tuple
-from .validacao import validar_impressora, validar_ip
+from .validacao import validar_impressora, validar_ipv4
 import copy
 #import pandas as pd
 #import numpy as np  
@@ -81,7 +81,7 @@ def scan_manual():
     if tipo_scan == 1:
         ip = input("digite o IP (ex: 255.255.255.255, 10.0.0.1...): ")
         if ip is not None:
-            if validar_ip(ip):
+            if validar_ipv4(ip):
                 imp = validar_impressora(ip)
                 if imp:
                     impressora_atulizar.append(imp)
@@ -108,7 +108,10 @@ def attCont_mensais(impressoras_atualizadas):
     #impressoras_bd, impressoras_atualizadas = scan_bd()
     #sincronizar_impressoras(impressoras_novas=impressoras_atualizadas, impressoras_bd=impressoras_bd)
 
+    atualizadas_por_serie = [imp.num_serie for imp in impressoras_atualizadas]
     for impressora in impressoras_atualizadas:
-        if impressora.status == "Ativo" and int(impressora.filial_id) != 1:
+        if impressora.status == "Ativo":
             insert_tbl_contMensais(impressora)
-
+    print(len(atualizadas_por_serie))
+    print(atualizadas_por_serie)
+    

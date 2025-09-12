@@ -65,7 +65,7 @@ class ImpressoraController:
 
     def set_tipo(self, tipo=None):
         if tipo is None:
-            self.impressora.tipo = "Laser" if "ZD230" in self.impressora.modelo else "Térmica"
+            self.impressora.tipo = "Térmica" if "ZD230" in self.impressora.modelo else "Laser"
         else:
             self.impressora.tipo = tipo
 
