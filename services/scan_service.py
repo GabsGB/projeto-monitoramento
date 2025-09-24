@@ -46,52 +46,34 @@ def scan_filiais():
         for impressora in faixa_filial:
             ip = f"10.0.{str(filial.id)}.{str(impressora)}"
             print(f"\n==========================================\nTestando IP {ip}")
-            imp = validar_impressora(ip)
+            imp = validar_impressora(ip, impressoras_bd)
             if imp is not None:
                 impressoras_filiais.append(imp)
     print(f"\nFinalizado scan das filiais.\n")
 
-    # Realizar testes mas primeiro garantir que somente as impressoras estão conectadas nessa faixa
-    '''
-    faixa_matriz = range(1,254)
-    ipBase_matriz = '192.168.50'
-    print(f"Iniciando scan na matriz na faixa {ipBase_matriz}.X")
-
-    for impressora in faixa_matriz:
-        ip = ipBase_matriz + str(impressora)
-        print(f"\n==========================================\nTestando IP {ip}")
-        imp = validar_impressora(ip)
-        if imp is not None:
-            impressoras_filiais.append(imp)
-    '''
     sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
     return  impressoras_filiais
 
-
+''' # Adicionar posteriormente
 def scan_manual():
     impressora_atulizar = []
     impressoras_bd = read_impressoras()
 
-    tipo_scan = int(input("""
-    
-        1 - IP único
-        2 - Faixa de IP
-        : """))
-    
-    if tipo_scan == 1:
-        ip = input("digite o IP (ex: 255.255.255.255, 10.0.0.1...): ")
-        if ip is not None:
+    ip = input("digite o IP (ex: 255.255.255.255, 10.0.0.1...): ").strip()
+    if ip is not None:
+        if not "-" in ip: # IP único
             if validar_ipv4(ip):
                 imp = validar_impressora(ip)
                 if imp:
                     impressora_atulizar.append(imp)
-        
-    elif tipo_scan == 2:
-        
-        pass
+        else:
+
+            
+            pass
+
 
     sincronizar_impressoras(impressoras_novas=impressora_atulizar, impressoras_bd=impressoras_bd)
-
+'''
 
 def attImpressora_filial(impressoras_atualizadas):
     #impressoras_bd, impressoras_atualizadas = scan_bd()

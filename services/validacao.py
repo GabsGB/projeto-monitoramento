@@ -20,9 +20,11 @@ def validar_ipv4(ip):
         return False
     
 
-def validar_impressora(ip):
-    impressoras_leituras = read_impressoras()
-    bd_por_ip = {imp.ip: imp for imp in impressoras_leituras}
+def validar_impressora(ip, impressoras_bd=None):
+    
+    if impressoras_bd is None:
+        impressoras_bd = read_impressoras()
+    bd_por_ip = {imp.ip: imp for imp in impressoras_bd}
     
     if scan(ip):
         print("Ip Ativo!")
