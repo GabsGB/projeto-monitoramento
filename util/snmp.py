@@ -1,6 +1,5 @@
 from pysnmp.hlapi import *
 from pysnmp.entity.engine import SnmpEngine
-#from util.mib import getMib
 
 #mib = getMib()
 

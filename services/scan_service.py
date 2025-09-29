@@ -1,6 +1,6 @@
 from classes.ImpressoraController import ImpressoraController
 from classes.Impressora import Impressora
-from .bd_service import read_impressoras, limpar_tbl, insert_tbl_relImpressora, insert_tbl_contMensais, read_filiais
+from .bd_service import read_impressoras, limpar_tbl, insert_tbl_relImpressora, insert_tbl_contMensais, read_tbl_filiais
 from .sync_service import sincronizar_impressoras
 from util.scan import scan
 from util.snmp import snmp
@@ -35,7 +35,7 @@ def scan_bd() -> Tuple[list[Impressora], list[Impressora]]:
 
 def scan_filiais():
     print("Iniciando scan total das filiais...")
-    filiais_bd = read_filiais()
+    filiais_bd = read_tbl_filiais()
     impressoras_bd = read_impressoras()
     
     faixa_filial = range(50, 56)

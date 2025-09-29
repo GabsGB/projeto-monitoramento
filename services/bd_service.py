@@ -7,11 +7,11 @@ def conectar_bd(comando, method='insert'):
     
     try:
         conector = mariadb.connect(
+            host="192.168.0.114",
+            port=3306,
             user='root@localhost',
             password="-admin123",
-            host="127.0.0.1",
-            port=3306,
-            database="teste")
+            database="solupress_coplacana")
         print("\nConexão ao Banco de Dados realizada com sucesso!\n")
     except mariadb.Error as e:
         print(f"Erro ao se conectar a plataforma do MariaDB: {e}")
