@@ -1,51 +1,46 @@
 from classes.ImpressoraController import ImpressoraController
+from util.loggin import log_info, log_error
 import copy
 
 def sincronizar_impressoras(impressoras_novas, impressoras_bd):
-    # Índices rápidos por série e ip
-
-    bd_por_serie = { imp.num_serie: imp for imp in impressoras_bd}
-    #print(bd_por_serie.keys())    
-    bd_por_ip = { imp.ip: imp for imp in impressoras_bd}
-    #print(bd_por_ip.keys())
+    bd_por_serie = {imp.num_serie: imp for imp in impressoras_bd}
+    bd_por_ip = {imp.ip: imp for imp in impressoras_bd}
 
     for nova in impressoras_novas:
-        print(f"\nN° de série: {nova.num_serie}")
-        print(f"IP: {nova.ip}")
+        log_info(f"Sincronizando impressora: Série {nova.num_serie}, IP {nova.ip}")
         
         if not nova.num_serie:
-            print(f"Impressora sem N° de série \nIP: {nova.ip}\nSérie:{nova.num_serie}\nModelo:{nova.modelo}")
+            log_error(f"Impressora sem número de série. IP: {nova.ip}, Modelo: {nova.modelo}")
             continue
 
-        if nova.num_serie not in bd_por_serie: # Verifica se a imrpessora não esta cadastrada pelo n° de série
-            print(f"[X] Impressora não está no BD")
-            #print(f'Inserindo nova impressora: {nova}')
+        if nova.num_serie not in bd_por_serie:
+            log_info(f"[X] Impressora não está no BD: Série {nova.num_serie}")
 
-            if nova.ip in bd_por_ip: # Verifica se o IP dela esta sendo usado por outra impressora
+            if nova.ip in bd_por_ip:
                 imp_antiga = copy.deepcopy(bd_por_ip[nova.ip])
                 controler = ImpressoraController(imp_antiga)
-                print(f"[X] IP cadastrado com outra impressora {imp_antiga.num_serie} ... limpando ip da impressora antiga!")
+                log_info(f"[X] IP {nova.ip} já cadastrado com outra impressora ({imp_antiga.num_serie}). Limpando IP da impressora antiga.")
                 controler.limparIp()
                 controler.salvar_bd(bd_por_ip[nova.ip])
-                
             else:
-                print("IP disponivel!")
-            
+                log_info(f"IP {nova.ip} disponível para uso.")
+
             controler = ImpressoraController(nova)
             controler.salvar_bd()
 
-        else: # num_serie está cadastrado ja
-            print("[✓] Impressora está no BD")
-            atual = bd_por_serie[nova.num_serie] # recebe os dados da impressora do BD (versão antiga)
+        else:
+            log_info(f"[✓] Impressora já está no BD: Série {nova.num_serie}")
+            atual = bd_por_serie[nova.num_serie]
 
             if nova.ip != atual.ip and nova.ip in bd_por_ip:
                 imp_antiga = copy.deepcopy(bd_por_ip[nova.ip])
                 controler = ImpressoraController(imp_antiga)
-                print(f"[X] IP cadastrado com outra impressora {imp_antiga.num_serie} ... limpando ip da impressora antiga!")
+                log_info(f"[X] IP {nova.ip} já cadastrado com outra impressora ({imp_antiga.num_serie}). Limpando IP da impressora antiga.")
                 controler.limparIp()
                 controler.salvar_bd(bd_por_ip[nova.ip])
 
-            controler = ImpressoraController(nova) # recebe a impressora após o scan
-            controler.salvar_bd(atual) # verifica se possui atualizações e se tiver salva
-        
-    print("\n[✓] Impressoras sincronizadas.")
+            controler = ImpressoraController(nova)
+            controler.salvar_bd(atual)
+
+    log_info("[✓] Impressoras sincronizadas com sucesso.")
+
