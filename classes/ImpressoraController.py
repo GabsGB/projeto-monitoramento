@@ -1,6 +1,7 @@
 from util.scan import scan
 from util.snmp import snmp
 from services.bd_service import conectar_bd
+from util.loggin import log_info, log_error
 
 class ImpressoraController:
     def __init__(self, impressora=None):
@@ -33,30 +34,26 @@ class ImpressoraController:
 
 
     def atualizar_dados_snmp(self):
-        
         if scan(self.impressora.ip):
             oids = snmp(self.impressora.ip)
             if not oids:
                 self.impressora.status = "Erro no SNMP"
+                log_error(f"Erro ao obter dados SNMP para IP {self.impressora.ip}")
                 return
         
             self.impressora.status = "Ativo"
             for oid in oids:
-                # n° de série
-                if oid["oid"] == "1.3.6.1.2.1.43.5.1.1.17.1": # N° de série
+                if oid["oid"] == "1.3.6.1.2.1.43.5.1.1.17.1":
                     self.impressora.num_serie = oid["resposta"] or "Não encontrado!"
-                
-                # modelo
-                if oid["oid"] == "1.3.6.1.2.1.25.3.2.1.3.1": # Modelo
+                if oid["oid"] == "1.3.6.1.2.1.25.3.2.1.3.1":
                     self.impressora.modelo = oid["resposta"] or "Não encontrado!"
-                
-                # contador
-                if oid["oid"] == "1.3.6.1.2.1.43.10.2.1.4.1.1": # Contador
+                if oid["oid"] == "1.3.6.1.2.1.43.10.2.1.4.1.1":
                     self.impressora.contador = oid["resposta"] or "Não encontrado!"
             self.set_tipo()
-
+            log_info(f"Dados SNMP atualizados para IP {self.impressora.ip}")
         else:
             self.impressora.status = "Offline"
+            log_info(f"Impressora offline: IP {self.impressora.ip}")
 
 
     def set_status(self, status):
@@ -83,30 +80,29 @@ class ImpressoraController:
         }
 
 
-    def salvar_bd(self, antigo=None): # Se for realizar insert somente chamar a função, para update mandar o objeto antigo
-
+    def salvar_bd(self, antigo=None):
         if antigo is None:
-            # 🔹 INSERT - impressora nova
-            ip_value = 'NUll' if self.impressora.ip is None else '"'+self.impressora.ip+'"'
+            ip_value = 'NULL' if self.impressora.ip is None else f'"{self.impressora.ip}"'
             self.impressora.tipo = 'Laser' if "ZD230" in self.impressora.modelo else 'Térmica'
-            if self.impressora.conexao != "USB": self.impressora.conexao = "IP"
+            if self.impressora.conexao != "USB":
+                self.impressora.conexao = "IP"
             
-            comando = F'''
+            comando = f'''
                 INSERT INTO impressoras (num_serie, modelo, tipo, ip, status, conexao)
                 VALUES ("{self.impressora.num_serie}", "{self.impressora.modelo}", "{self.impressora.tipo}", {ip_value}, "{self.impressora.status}", "{self.impressora.conexao}")
             '''
             conectar_bd(comando)
-
+            log_info(f"[INSERT] Impressora {self.impressora.num_serie} adicionada ao banco.")
         else:
             updates = []
 
             def add_update(campo, valor):
                 if isinstance(valor, str): 
-                    updates.append(f'{campo}="{valor}"') # Se o valor for uma string
+                    updates.append(f'{campo}="{valor}"')
                 elif valor is None:
-                    updates.append(f'{campo}=NULL') # Se o valor for vazio
+                    updates.append(f'{campo}=NULL')
                 else:
-                    updates.append(f'{campo}={valor}') # Se o valor for númerico
+                    updates.append(f'{campo}={valor}')
             
             if self.impressora.modelo != antigo.modelo:
                 add_update("modelo", self.impressora.modelo)
@@ -122,10 +118,7 @@ class ImpressoraController:
             if updates:
                 comando = f'UPDATE impressoras SET {", ".join(updates)} WHERE num_serie="{self.impressora.num_serie}"'
                 conectar_bd(comando)
-                print(f"[UPDATE] Impressora {self.impressora.num_serie} atualizada.")
+                log_info(f"[UPDATE] Impressora {self.impressora.num_serie} atualizada com alterações: {updates}")
             else:
-                print(f"[✓] Impressora {self.impressora.num_serie} sem alterações.")
+                log_info(f"[✓] Impressora {self.impressora.num_serie} sem alterações.")
 
-
-    def limparIp(self):
-        self.impressora.ip = None
