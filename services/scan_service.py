@@ -2,15 +2,13 @@ from classes.ImpressoraController import ImpressoraController
 from classes.Impressora import Impressora
 from .bd_service import read_impressoras, limpar_tbl, insert_tbl_relImpressora, insert_tbl_contMensais, read_tbl_filiais
 from .sync_service import sincronizar_impressoras
-from util.scan import scan
-from util.snmp import snmp
 from typing import Tuple
 from .validacao import validar_impressora, validar_ipv4
 import copy
 #import pandas as pd
 #import numpy as np  
 
-def scan_bd() -> Tuple[list[Impressora], list[Impressora]]:
+def scan_bd() -> Tuple[list[Impressora]]:
     impressoras_bd: list[Impressora] = read_impressoras()
     impressoras_leitura = copy.deepcopy(impressoras_bd)
 
@@ -54,7 +52,7 @@ def scan_filiais():
     sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
     return  impressoras_filiais
 
-''' # Adicionar posteriormente
+# Adicionar posteriormente
 def scan_manual():
     impressora_atulizar = []
     impressoras_bd = read_impressoras()
@@ -63,17 +61,16 @@ def scan_manual():
     if ip is not None:
         if not "-" in ip: # IP único
             if validar_ipv4(ip):
-                imp = validar_impressora(ip)
+                imp = validar_impressora(ip, impressoras_bd)
                 if imp:
                     impressora_atulizar.append(imp)
         else:
 
-            
             pass
 
 
     sincronizar_impressoras(impressoras_novas=impressora_atulizar, impressoras_bd=impressoras_bd)
-'''
+
 
 def attImpressora_filial(impressoras_atualizadas):
     #impressoras_bd, impressoras_atualizadas = scan_bd()
