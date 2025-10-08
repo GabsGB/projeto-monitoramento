@@ -7,7 +7,7 @@ from util.loggin import log_info, log_error
 def conectar_bd(comando, method='insert'):
     try:
         conector = mariadb.connect(
-            host="192.168.0.193",
+            host="192.168.0.181",
             port=3306,
             user='root@localhost',
             password="-admin123",

@@ -79,8 +79,7 @@ def attImpressora_filial(impressoras_atualizadas):
     limpar_tbl("impressora_filial")
     for impressora in impressoras_atualizadas:
         if impressora.status == "Ativo":
-            controler = ImpressoraController(impressora)
-            insert_tbl_relImpressora(controler)
+            insert_tbl_relImpressora(impressora)
             log_info(f"Relacionamento inserido: Série {impressora.num_serie}, Filial {impressora.filial_id}")
 
 

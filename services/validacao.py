@@ -1,4 +1,4 @@
-from services.scan_service import scan
+from util.scan import scan
 from classes.ImpressoraController import ImpressoraController
 from classes.Impressora import Impressora
 from .bd_service import read_impressoras
