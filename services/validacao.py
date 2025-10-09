@@ -31,7 +31,7 @@ def validar_impressora(ip, impressoras_bd=None):
         controler.atualizar_dados_snmp()
         if imp.num_serie is not None:
             log_info(f"N° de série detectado: {imp.num_serie}")
-            if imp.filial_id == "1" or "ZD230" in imp.modelo:
+            if "ZD230" in imp.modelo:
                 log_info("Impressora bloqueada: Matriz ou Zebra")
                 return None
             log_info("Impressora inserida na lista de atualização.")

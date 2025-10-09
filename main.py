@@ -3,9 +3,11 @@ from services.scan_service import scan_filiais, scan_bd, attCont_mensais, scan_m
 if __name__ == "__main__":
     
     #resp = input("Realizar somente o scan, atualizar contadores?  \n1 - Scan \n2 - Scan + Contadores \n:")
-
-    #scan_filiais()
-    impressoras = scan_bd()
+    with open("logs/monitoramento.log", "w") as f:
+        pass
     
-    attCont_mensais(impressoras)
+    scan_filiais()
+    impressoras_verificadas, impressoras_leitura = scan_bd()
+    
+    attCont_mensais(impressoras_leitura)
     

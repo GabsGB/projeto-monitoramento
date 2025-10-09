@@ -18,7 +18,7 @@ def scan_bd() -> Tuple[list[Impressora]]:
             log_info(f"Processando impressora: IP {imp.ip}, Série {imp.num_serie}")
             controler = ImpressoraController(imp)
             controler.set_filialId()
-            if "ZD230" in imp.modelo or imp.filial_id == "1":
+            if "ZD230" in imp.modelo:
                 continue
             controler.atualizar_dados_snmp()
             log_info(f"Dados SNMP atualizados para IP {imp.ip}")
@@ -27,7 +27,7 @@ def scan_bd() -> Tuple[list[Impressora]]:
             log_info(f"Impressora ignorada: sem IP definido (Série {imp.num_serie})")
     
     sincronizar_impressoras(impressoras_atualizadas, impressoras_bd)
-    return impressoras_atualizadas
+    return impressoras_atualizadas, impressoras_bd
 
 
 def scan_filiais():
@@ -35,7 +35,7 @@ def scan_filiais():
     filiais_bd = read_tbl_filiais()
     impressoras_bd = read_impressoras()
     
-    faixa_filial = range(50, 56)
+    faixa_filial = range(50, 59)
     impressoras_filiais = []
 
     for filial in filiais_bd:
@@ -51,6 +51,8 @@ def scan_filiais():
 
     sincronizar_impressoras(impressoras_novas=impressoras_filiais, impressoras_bd=impressoras_bd)
     return impressoras_filiais
+
+## def scan_matriz():
 
 
 def scan_manual():
