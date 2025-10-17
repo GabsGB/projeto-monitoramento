@@ -31,10 +31,15 @@ def sincronizar_impressoras(impressoras_novas, impressoras_bd):
         else:
             log_info(f"[✓] Impressora já está no BD: Série {nova.num_serie}")
             atual = bd_por_serie[nova.num_serie]
+            print()
+            print(nova)
+            print()
+            print(atual)
 
             if nova.ip != atual.ip and nova.ip in bd_por_ip:
                 imp_antiga = copy.deepcopy(bd_por_ip[nova.ip])
                 controler = ImpressoraController(imp_antiga)
+                
                 log_info(f"[X] IP {nova.ip} já cadastrado com outra impressora ({imp_antiga.num_serie}). Limpando IP da impressora antiga.")
                 controler.limparIp()
                 controler.salvar_bd(bd_por_ip[nova.ip])

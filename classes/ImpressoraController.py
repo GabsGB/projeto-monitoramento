@@ -67,6 +67,10 @@ class ImpressoraController:
             self.impressora.tipo = tipo
 
 
+    def limparIp(self):
+        self.impressora.ip = None
+
+
     def to_dict(self):
         return {
             "num_serie": self.impressora.num_serie,
@@ -83,7 +87,6 @@ class ImpressoraController:
     def salvar_bd(self, antigo=None):
         if antigo is None:
             ip_value = 'NULL' if self.impressora.ip is None else f'"{self.impressora.ip}"'
-            self.impressora.tipo = 'Laser' if "ZD230" in self.impressora.modelo else 'Térmica'
             if self.impressora.conexao != "USB":
                 self.impressora.conexao = "IP"
             
@@ -95,7 +98,6 @@ class ImpressoraController:
             log_info(f"[INSERT] Impressora {self.impressora.num_serie} adicionada ao banco.")
         else:
             updates = []
-
             def add_update(campo, valor):
                 if isinstance(valor, str): 
                     updates.append(f'{campo}="{valor}"')
