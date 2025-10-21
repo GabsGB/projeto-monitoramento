@@ -8,7 +8,7 @@ df_filiais = pd.read_excel("impressoras.xlsx", sheet_name='filiais')
 
 # Configurações
 EMAIL_REMETENTE = "solupress@coplacana.com.br"
-EMAIL_SENHA = "coplacana@1"
+EMAIL_SENHA = "Cooperativa@2"
 EMAIL_COPIA = "matheus.tano@coplacana.com.br;fabio.christofoletti@coplacana.com.br"
 SMTP_SERVIDOR = "smtp-mail.outlook.com"
 SMTP_PORTA = 587
@@ -18,11 +18,11 @@ filial_por_nome = {}
 filiais_semEmail = []
 
 for fil in df_filiais.to_dict(orient="records"):
-    nome = fil['nome_filial'].lower()
+    nome = fil['filial'].lower()
     filial_por_nome[nome] = {
         "nome": nome,
-        "id": fil['id_filial'],
-        "email": fil['email_filial'],
+        "id": fil['cod'],
+        "email": fil['emails'],
         "impressoras": []
     }
 
@@ -35,8 +35,8 @@ for imp in df_data_base.to_dict(orient="records"):
             "num_serie": imp['num_serie'],
             "ip": imp['ip'],
             "nome": imp['impressora'],
-            "leituraJunho": imp['junho'],
-            "leituraJulho": imp['julho']
+            "leituraAgosto": imp['Agosto'],
+            "leituraSetembro": imp['Setembro']
         }
         filial_por_nome[nome_filial]["impressoras"].append(impressora)
 
@@ -65,11 +65,11 @@ for chave, filial in filial_por_nome.items():
         'num_serie': 'Nº Série',
         'ip': 'IP',
         'nome': 'Modelo',
-        'leituraJunho': 'Junho',
-        'leituraJulho': 'Julho'
+        'leituraAgosto': 'Agosto',
+        'leituraSetembro': 'Setembro'
     })
 
-    tabela_html = df_impressoras[['Modelo', 'Nº Série', 'IP', 'Junho', 'Julho']].to_html(index=False, border=1)
+    tabela_html = df_impressoras[['Modelo', 'Nº Série', 'IP', 'Agosto', 'Setembro']].to_html(index=False, border=1)
 
     corpo_html = f"""
     <style>

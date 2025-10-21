@@ -7,7 +7,7 @@ from util.loggin import log_info, log_error
 def conectar_bd(comando, method='insert'):
     try:
         conector = mariadb.connect(
-            host="192.168.0.103",
+            host="192.168.0.177",
             port=3306,
             user='root@localhost',
             password="-admin123",
@@ -77,7 +77,7 @@ def read_impressoras():
     impressoras_bd = []
     for leitura in impressoras:
         imp = Impressora(leitura[0], leitura[1], leitura[2], leitura[3], leitura[4], leitura[5])
-        log_info(f"Impressora carregada: n° de série: {imp.num_serie}, IP: {imp.ip}")
+        log_info(f"Impressora carregada: n° de série: {imp.num_serie}, IP: {imp.ip} status: {imp.status}",)
         impressoras_bd.append(imp)
     return impressoras_bd
 

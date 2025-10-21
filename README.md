@@ -2,8 +2,17 @@
 
 ### Falta adicionar
 
-* Criar e redefinir usuários de acesso ao Banco de Dados
-* Finalizar/Melhorar o scan manual
+* [ ] Criar e redefinir usuários de acesso ao Banco de Dados:
+  * ##### Usuário de acesso manual
+  * ##### Usuário de acesso do sistema
+  
+
+* [ ] Finalizar/Melhorar o scan manual
+
+* [ ] Rotina diária de coleta dos dados das impressoras
+  * Manter atualizado o status das impressoras
+  * contador diário
+
 ---
 #### Interface visual (TkInter)
 * Pagina de Visualização de impressoras

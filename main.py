@@ -7,11 +7,16 @@ if __name__ == "__main__":
     with open("logs/monitoramento.log", "w") as f:
         pass
     
-    scan_manual()
+    #scan_manual()
+    scan_bd()
     #scan_filiais()
     #impressoras_verificadas, impressoras_leitura = scan_bd()
     
 
-    # corrigir - alterar função para realizar a contagem em todas as impressoras do BD, definindo o contador com o valor recebido do SNMP ou o status de erro que receber, como offline ou erro no SNMP
-    #attCont_mensais(impressoras_leitura)
+    # CORRIGIR
     
+    # * Alterar função para realizar a contagem em todas as impressoras do BD, definindo o contador com o valor recebido do SNMP ou o status de erro que receber, como offline ou erro no SNMP
+
+    # * 
+
+    #attCont_mensais(impressoras_leitura)

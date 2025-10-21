@@ -4,6 +4,7 @@ from classes.Impressora import Impressora
 from .bd_service import read_impressoras
 from util.loggin import log_info, log_error
 import ipaddress
+import copy
 
 def validar_ipv4(ip):
     try:
@@ -43,7 +44,7 @@ def validar_impressora(ip, impressoras_bd=None):
         log_info(f"IP offline: {ip}")
         if ip in bd_por_ip:
             log_info("IP cadastrado no banco... alterando status da impressora.")
-            imp_existente = bd_por_ip[ip]
+            imp_existente = copy.deepcopy(bd_por_ip[ip])
             controler = ImpressoraController(imp_existente)
             controler.set_status("Offline")
             log_info("Impressora inserida na lista de atualização.")

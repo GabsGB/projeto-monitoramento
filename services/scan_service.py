@@ -69,13 +69,13 @@ def scan_manual():
                 log_info(f"IP digitado: {ip}")
                 imp = validar_impressora(ip, impressoras_bd)
                 if imp:
-                    log_info(f"Impressora validada manualmente: Série {imp.num_serie}, IP {imp.ip}")
+                    log_info(f"Impressora validada manualmente: Série {imp.num_serie}, IP {imp.ip}, status: {imp.status}")
                     impressora_atulizar.append(imp)
             else:
                 log_error(f"IP inválido digitado: {ip}")
         else:
             log_info(f"Faixa de IPs detectada: {ip} (ainda não implementado)")
-    log_info(f"Impressoras para atualizar: {impressora_atulizar} \nImpressoras Banco de Dados: {impressoras_bd}")
+
     sincronizar_impressoras(impressoras_novas=impressora_atulizar, impressoras_bd=impressoras_bd)
 
 
