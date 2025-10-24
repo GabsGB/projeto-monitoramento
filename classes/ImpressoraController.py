@@ -9,16 +9,17 @@ class ImpressoraController:
     
 
     def __str__(self):
-        return """"
-            num_serie": self.impressora.num_serie,
-            "modelo": self.impressora.modelo,
-            "tipo": self.impressora.tipo,
-            "ip": self.impressora.ip,
-            "filial_id": self.impressora.filial_id,
-            "status": self.impressora.status,
-            "conexao": self.impressora.conexao,
-            "contador": self.impressora.contador
-            """
+        return (
+            f'num_serie: {self.impressora.num_serie}, '
+            f'modelo: {self.impressora.modelo}, '
+            f'tipo: {self.impressora.tipo}, '
+            f'ip: {self.impressora.ip}, '
+            f'filial_id: {self.impressora.filial_id}, '
+            f'status: {self.impressora.status}, '
+            f'conexao: {self.impressora.conexao}, '
+            f'contador: {self.impressora.contador}'
+        )
+
 
     
     def set_impressora(self, nova_impressora):
@@ -26,11 +27,25 @@ class ImpressoraController:
 
 
     def set_filialId(self):
-        ip_segmentado = self.impressora.ip.split(".")
-        if ip_segmentado[0] == "192" or ip_segmentado[1] == "18":
-            self.impressora.filial_id = "1"
+        if self.impressora.ip is None:
+            self.impressora.filial_id = "-"
         else:
-            self.impressora.filial_id = ip_segmentado[2]
+            ip_segmentado = self.impressora.ip.split(".")
+            if ip_segmentado[0] == "192" or ip_segmentado[1] == "18":
+                self.impressora.filial_id = "1"
+            else:
+                self.impressora.filial_id = ip_segmentado[2]
+
+
+    def set_status(self, status):
+        self.impressora.status = status
+
+
+    def set_tipo(self, tipo=None):
+        if tipo is None:
+            self.impressora.tipo = "Térmica" if "ZD230" in self.impressora.modelo else "Laser"
+        else:
+            self.impressora.tipo = tipo
 
 
     def atualizar_dados_snmp(self):
@@ -54,17 +69,8 @@ class ImpressoraController:
         else:
             self.impressora.status = "Offline"
             log_info(f"Impressora offline: IP {self.impressora.ip}")
-
-
-    def set_status(self, status):
-        self.impressora.status = status
-
-
-    def set_tipo(self, tipo=None):
-        if tipo is None:
-            self.impressora.tipo = "Térmica" if "ZD230" in self.impressora.modelo else "Laser"
-        else:
-            self.impressora.tipo = tipo
+        
+        self.set_filialId()
 
 
     def limparIp(self):

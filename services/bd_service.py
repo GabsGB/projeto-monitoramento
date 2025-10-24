@@ -7,7 +7,7 @@ from util.loggin import log_info, log_error
 def conectar_bd(comando, method='insert'):
     try:
         conector = mariadb.connect(
-            host="192.168.0.177",
+            host="192.168.0.197",
             port=3306,
             user='root@localhost',
             password="-admin123",
@@ -83,9 +83,15 @@ def read_impressoras():
 
 
 def insert_tbl_contMensais(impressora):
+    log_info(f'Impressora a ser inserida: \nN{impressora}')
     comando = f'''
-    INSERT INTO contadores_mensais (num_serie, filial_id, contador)
-    VALUES ("{impressora.num_serie}", {int(impressora.filial_id)}, {float(impressora.contador)})
+    INSERT INTO contadores_mensais (num_serie, filial_id, contador, estado)
+    VALUES (
+    '{impressora.num_serie}', 
+    '{impressora.filial_id}', 
+    {float(impressora.contador) if impressora.contador is not None else float(0)},
+    '{"Ok" if impressora.contador is not None else 'Verificar'}')
     '''
     conectar_bd(comando)
     return
+

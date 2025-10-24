@@ -4,8 +4,6 @@ import copy
 
 def sincronizar_impressoras(impressoras_novas, impressoras_bd):
     bd_por_serie = {imp.num_serie: imp for imp in impressoras_bd}
-    #for imp in bd_por_serie:
-    #    print(imp)
 
     bd_por_ip = {imp.ip: imp for imp in impressoras_bd}
 
@@ -34,10 +32,6 @@ def sincronizar_impressoras(impressoras_novas, impressoras_bd):
         else:
             log_info(f"[✓] Impressora já está no BD: Série {nova.num_serie}, Ip: {nova.ip}, Status: {nova.status}")
             atual = bd_por_serie[nova.num_serie]
-            #print()
-            #print(nova)
-            #print()
-            #print(atual)
 
             if nova.ip != atual.ip and nova.ip in bd_por_ip:
                 imp_antiga = copy.deepcopy(bd_por_ip[nova.ip])

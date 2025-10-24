@@ -17,7 +17,7 @@ def scan_bd() -> Tuple[list[Impressora]]:
         if imp.ip is not None:
             log_info(f"Processando impressora: IP {imp.ip}, Série {imp.num_serie}")
             controler = ImpressoraController(imp)
-            controler.set_filialId()
+            #controler.set_filialId()
             if "ZD230" in imp.modelo:
                 continue
             controler.atualizar_dados_snmp()
@@ -89,28 +89,21 @@ def attImpressora_filial(impressoras_atualizadas):
 
 
 def attCont_mensais(impressoras_atualizadas, impressoras_bd):
-    atualizadas_por_serie = [imp.num_serie for imp in impressoras_atualizadas]
-    bd_por_serie = [imp.num_serie for imp in impressoras_bd]
-
-    # Repetir para cada impressora do banco de dados
-    #   - checar se a impressora está na lista de impressoras_atualizadas
-    #   True:
-    #       - Objeto impressora é trocado pelo objeto impressora da lista impressoras_atualizadas
-    #   False:
-    #       - Contador recebe "Verificar"
+    atualizadas_por_serie = {imp.num_serie: imp for imp in impressoras_atualizadas}
 
     for impressora in impressoras_bd:
-        if impressora.num_serie in atualizadas_por_serie:
-            if atualizadas_por_serie[impressora.num_serie].num_serie == "Ativo":
-                insert_tbl_contMensais(atualizadas_por_serie[impressora.num_serie].contador)
+        if impressora.num_serie in atualizadas_por_serie: impressora = atualizadas_por_serie[impressora.num_serie]
+        if impressora.contador is None:
+            log_info(f"Contador mensal vazio! Série: {impressora.num_serie} IP: {impressora.ip} Status: {impressora.status} Contador: {impressora.contador}")
+            if impressora.filial_id is None:
+                ImpressoraController(impressora).set_filialId()
+        
+        insert_tbl_contMensais(impressora)
         #insert_tbl_contMensais(impressora)
         #log_info(f"Contador mensal inserido: Série {impressora.num_serie}, Contador {impressora.contador}")
-
-    # metodo antigo
-    for impressora in impressoras_atualizadas:
-        if impressora.status == "Ativo":
-            insert_tbl_contMensais(impressora)
-            log_info(f"Contador mensal inserido: Série {impressora.num_serie}, Contador {impressora.contador}")
     
-    log_info(f"Total de impressoras atualizadas: {len(atualizadas_por_serie)}")
-    log_info(f"Séries atualizadas: {atualizadas_por_serie}")
+    log_info(f"Total Impressoras no banco: {len(impressoras_bd)}")
+    log_info(f"Total de impressoras atualizadas: {len(impressoras_atualizadas)}")
+    impressoras_online = [imp for imp in impressoras_atualizadas if imp.status == "Ativo"]
+    log_info(f"Total Impressoras online: {len(impressoras_online)}")
+    

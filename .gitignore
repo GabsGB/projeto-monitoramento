@@ -8,7 +8,7 @@ __pycache__/
 # Arquivos temporários e de log
 *.log
 *.tmp
-temp/
+#temp/
 
 # Configurações locais e variáveis de ambiente
 .env
